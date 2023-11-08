@@ -1,5 +1,6 @@
 // FOR LOCAL ENVIRONMENT
 //for commit 1
+//for commit 2
 module.exports = {
     HOST: "localhost",
     USER: "root",
