@@ -22,8 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 
 // Home route to render the blog page
-app.get("/", (req, res) => {
-  res.render("ourBlogs");
+// this will not only render the ui also fetches data from database so asynchronous
+//
+app.get("/", async (req, res) => {
+  const retrivedBlogs = await blogs.findAll();
+  
+  res.render("ourBlogs", {blogs:retrivedBlogs});
 });
 
 // Index route with dynamic data
@@ -44,15 +48,30 @@ app.post("/addBlog",upload.single("image"), async(req,res)=>{
 
   console.log(req.body)
   // destructuiring
-  const {title,subTitle, description} = req.body;
-  await blogs.create({
-    title,
-    subTitle,
-    description,
-    imageUrl: req.file.filename
-   })
-   res.send("BLOG HAS BEEN CREATED ")
+  try {
+    const { title, subTitle, description } = req.body;
+
+    if (!req.file) {
+        throw new Error('File not provided');
+    }
+
+    await blogs.create({
+        title,
+        subTitle,
+        description,
+        imageUrl: req.file.filename
+    });
+
+    res.send("BLOG HAS BEEN CREATED ");
+} catch (error) {
+    // Handle the error
+    console.error(error);
+    res.status(400).send("Error creating blog: " + error.message);
+}
 })
+
+//making the this directory statically available to the whole website
+app.use(express.static("./uploads/"))
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

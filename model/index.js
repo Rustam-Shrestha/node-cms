@@ -1,4 +1,4 @@
-const dbConfig = require("../config/dbconfig");
+const dbConfig = require("../config/dbConfig");
 const { Sequelize, DataTypes } = require("sequelize");
 
 //sequelize is connection variable tat is going to be of big use future
